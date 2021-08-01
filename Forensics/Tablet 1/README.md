@@ -24,6 +24,8 @@ My first assumption lists:
 `SSH - related`
 `telnet/ftp`
 
+# Analysis
+
 If we extract the file `tablet.tar.gz`, we can find something "phishy" in the folder:
 `private\var\root\.bash_history` where there's a bash history command that was logged:
 
@@ -67,6 +69,9 @@ The database structure consists of 2 tables, `NSFKey` and `NSFValues`.
 
 However, `NSFValues` Table has some interesting columns which contains some SSH Confidential Information.
 We can retrieve information from there:
+
+<img src="images/img3.png" />
+<br>
 
 `privatePart` which contains SSH Private Key.
 ```
@@ -117,5 +122,106 @@ We also get the SSH Username's Login -> `red`
 and a custom port in order to connect -> `42069`
 
 Finally, we have the `decryptedPassword` which is `********`
+
+We can proceed to connect via SSH:
+`ssh -i private_key red@red.chal.uiuc.tf -p 42069`
+
+Yet:
+
+<img src="images/img4.png" />
+<br>
+
+We can't use SSH as SFTP is the only connections that are allowed, so
+we have to switch to `SFTP`
+
+<img src="images/img5.png" />
+
+Surfing through the directories and files, leads to an interesting findings
+from `/bash_history`:
+
+```bash
+sftp> ls -la
+dr-xr-xr-x    1 red      red          4096 Jul 29 02:23 .
+drwxr-xr-x    1 root     root         4096 Jul 29 02:23 ..
+-r-xr-xr-x    1 red      red            31 Jul 25 14:28 .bash_history
+-r-xr-xr-x    1 red      red           220 Feb 25  2020 .bash_logout
+-r-xr-xr-x    1 red      red          3771 Feb 25  2020 .bashrc
+-r-xr-xr-x    1 red      red           807 Feb 25  2020 .profile
+dr-xr-xr-x    1 red      red          4096 Jul 29 02:23 .ssh
+sftp> pwd
+Remote working directory: /home/red
+sftp> cd ..
+sftp> pwd
+Remote working directory: /home
+sftp> ls -la
+drwxr-xr-x    1 root     root         4096 Jul 29 02:23 .
+drwxr-xr-x    1 root     root         4096 Jul 31 15:22 ..
+dr-xr-xr-x    1 red      red          4096 Jul 29 02:23 red
+sftp> ls -la
+drwxr-xr-x    1 root     root         4096 Jul 29 02:23 .
+drwxr-xr-x    1 root     root         4096 Jul 31 15:22 ..
+dr-xr-xr-x    1 red      red          4096 Jul 29 02:23 red
+sftp> pwd
+Remote working directory: /home
+sftp> cd ..
+sftp> grep -r -i "RTL"
+Invalid command.
+sftp> ls
+bin     boot    dev     etc     home    kctf    lib     lib32   lib64   
+libx32  media   mnt     opt     proc    root    run     sbin    srv     
+sys     tmp     usr     var     
+sftp> cd tmp
+sftp> dir
+sftp> cd var
+sftp> ls
+backups  cache    lib      local    lock     log      mail     opt      
+run      spool    tmp      
+sftp> cd 
+sftp> pwd
+Remote working directory: /home/red
+
+sftp> ls -la
+dr-xr-xr-x    1 red      red          4096 Jul 29 02:23 .
+drwxr-xr-x    1 root     root         4096 Jul 29 02:23 ..
+-r-xr-xr-x    1 red      red            31 Jul 25 14:28 .bash_history
+-r-xr-xr-x    1 red      red           220 Feb 25  2020 .bash_logout
+-r-xr-xr-x    1 red      red          3771 Feb 25  2020 .bashrc
+-r-xr-xr-x    1 red      red           807 Feb 25  2020 .profile
+dr-xr-xr-x    1 red      red          4096 Jul 29 02:23 .ssh
+sftp> get .bash_history
+Fetching /home/red/.bash_history to .bash_history
+/home/red/.bash_history                 100%   31     0.1KB/s   00:00    
+```
+
+The content:
+```bash
+cat .bash_history
+mv /srv/exfiltrated "/srv/..."
+```
+
+There is `exfiltrated` directories which renamed as `...`. 
+We proceed to see what's behind the directories and we found `important_data.jpg` which
+leads to the flag.
+
+```bash
+sftp> cd srv
+sftp> ls
+sftp> ls -la
+drwxr-xr-x    1 root     root         4096 Jul 29 02:23 .
+drwxr-xr-x    1 root     root         4096 Jul 31 15:22 ..
+dr-xr-xr-x    1 root     root         4096 Jul 29 02:23 ...
+sftp> cd ...
+sftp> ls -la
+dr-xr-xr-x    1 root     root         4096 Jul 29 02:23 .
+drwxr-xr-x    1 root     root         4096 Jul 29 02:23 ..
+-r-xr-xr-x    1 root     root        43621 Jul 25 14:28 important_data.jpg
+sftp> get important_data.jpg 
+Fetching /srv/.../important_data.jpg to important_data.jpg
+/srv/.../important_data.jpg             100%   43KB  42.6KB/s   00:01    
+sftp>
+```
+<br>
+
+<img src="images/important_data.jpg" />
 
 
