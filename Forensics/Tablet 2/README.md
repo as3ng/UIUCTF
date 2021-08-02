@@ -233,6 +233,16 @@ We can find something useful from those directories, and turns out `private\var\
 
 Discord has a feature to **censor** the text using `||`, we can see from the JSON Format that the password of the
 Notes is `su5Syb@k4`.
+Refer to https://ciofecaforensics.com/2020/07/31/apple-notes-revisited-encrypted-notes/, we can use `Apple Cloud Notes
+Parser` (https://github.com/threeplanetssoftware/apple_cloud_notes_parser).
 
+<img src="images/apple_notes.png" />
+<br>
+
+After the notes is decrypted, we may refer to the output folder and there are several formats which we can choose to open.
+Finally, we got our notes decrypted with the flag inside.
+
+<img src="images/secret_notes.png" />
+<br>
 
 
