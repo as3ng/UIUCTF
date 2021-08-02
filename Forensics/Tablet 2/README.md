@@ -17,7 +17,8 @@ We can use `iLEAPP` (https://github.com/abrignoni/iLEAPP) for further analysis. 
 <br>
 
 From the `CloudKits`, we indicate that there are 2 devices that were used and there's interesting thing to be further
-analyzed, where `PasswordProtectedNote` record seems confidential to break.
+analyzed, where `PasswordProtectedNote` record seems confidential to break. It also indicates that the Notes is stored
+in `iCloud`.
 
 <img src="images/img3.png" />
 <br>
