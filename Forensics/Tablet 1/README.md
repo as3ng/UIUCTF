@@ -15,14 +15,13 @@ It looks like Red has been exfiltrating sensitive data bound for Mira HQ to thei
 We need to access that server and contain the leak.
 ```
 
-<br>
 We can make a hypoteses where there are some backup of an `apps` where we can make further analysis.
 There are reference to `private server` and **we need to access that server**. 
 Second hypotese -> Remote connections are needed.
 My first assumption lists:
-`netcat - related`
-`SSH - related`
-`telnet/ftp`
+* `netcat - related`
+* `SSH - related`
+* `telnet/ftp`
 
 # Analysis
 
