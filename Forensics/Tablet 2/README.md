@@ -2,7 +2,7 @@
 
 <img src="images/img1.png" />
 
-This challenge is part of the previous challenge but there are hidden informations
+This challenge is part of the previous challenge, another `iOS Mobile Forensic` but there are hidden informations
 that should be extracted and retrieved according to the description.
 
 # Analysis
